@@ -16,6 +16,13 @@ class CreateSubscribersTable extends Migration
         Schema::create('subscribers', function (Blueprint $table) {
             $table->increments('id');
             $table->string('email')->unique();
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->string('client_id')->nullable();
+            $table->string('session_id')->nullable();
+            $table->string('referer')->nullable();
+            $table->string('ip', 45)->nullable();
+            $table->char('country_id', 2)->nullable();
+            $table->string('user_agent')->nullable();
             $table->timestamps();
 
             $table->timestamp('email_verified_at')->nullable();

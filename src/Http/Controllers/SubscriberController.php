@@ -19,7 +19,16 @@ class SubscriberController extends Controller
 {
     public function store(StoreSubscriberRequest $request)
     {
-        $subscriber = Subscriber::create($request->all());
+        $subscriber = new Subscriber();
+        $subscriber->email = $request->email;
+        $subscriber->user_id = auth()->check() ? auth()->user()->id : null;
+        $subscriber->client_id = ($clientId = get_client_id()) ?: null;
+        $subscriber->session_id = $request->session()->getId();
+        $subscriber->referer = ($referer = request()->headers->get('referer')) ? substr($referer, 0, 255) : null;
+        $subscriber->ip = $request->ip();
+        $subscriber->country_id = \MyNet::getClientISOCountry();
+        $subscriber->user_agent = ($userAgent = $request->header('User-Agent')) ? substr($userAgent, 0, 255) : null;
+        $subscriber->save();
 
         if (config('laravel-subscribers.verify')) {
             $subscriber->sendEmailVerificationNotification();
